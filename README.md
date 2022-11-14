@@ -1,4 +1,3 @@
-
 ![GitHub all releases](https://img.shields.io/github/downloads/CR-Digital-Innovation/devsecops-accelerators/total)
 ![GitHub language count](https://img.shields.io/github/languages/count/CR-Digital-Innovation/devsecops-accelerators)
 ![GitHub top language](https://img.shields.io/github/languages/top/CR-Digital-Innovation/devsecops-accelerators?color=yellow)
@@ -6,6 +5,8 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/CR-Digital-Innovation/devsecops-accelerators?style=social)
 
 [<img src="https://img.shields.io/badge/CriticalRiver-1d417c" width="10%">](https://www.criticalriver.com/ai-ml-solution-offerings/devsecops/) [<img src="https://img.shields.io/badge/Twitter-1DA1F2?logo=Twitter&logoColor=white" width="9%">](https://twitter.com/CriticalRiver)
+
+### [CriticalRiver Blueprints for CI/CD using AWS, GCP and Azure](https://github.com/CR-Digital-Innovation/devsecops-accelerators/wiki)
 
 ### CriticalRiver DevSecOps Process
 
