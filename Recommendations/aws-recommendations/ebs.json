@@ -1,0 +1,68 @@
+{
+    "volumeRecommendations": [
+        {
+            "volumeArn": "arn:aws:ec2:us-east-1:876737291315:volume/vol-00e9c6f138981857d",
+            "accountId": "876737291315",
+            "currentConfiguration": {
+                "volumeType": "gp2",
+                "volumeSize": 8,
+                "volumeBaselineIOPS": 100,
+                "volumeBurstIOPS": 3000,
+                "volumeBaselineThroughput": 128,
+                "volumeBurstThroughput": 128
+            },
+            "finding": "Optimized",
+            "utilizationMetrics": [
+                {
+                    "name": "VolumeReadOpsPerSecond",
+                    "statistic": "Maximum",
+                    "value": 12.36
+                },
+                {
+                    "name": "VolumeWriteOpsPerSecond",
+                    "statistic": "Maximum",
+                    "value": 25.413333333333334
+                },
+                {
+                    "name": "VolumeReadBytesPerSecond",
+                    "statistic": "Maximum",
+                    "value": 414361.98
+                },
+                {
+                    "name": "VolumeWriteBytesPerSecond",
+                    "statistic": "Maximum",
+                    "value": 1748548.173333333
+                }
+            ],
+            "lookBackPeriodInDays": 14.0,
+            "volumeRecommendationOptions": [
+                {
+                    "configuration": {
+                        "volumeType": "gp3",
+                        "volumeSize": 8,
+                        "volumeBaselineIOPS": 3000,
+                        "volumeBurstIOPS": 3000,
+                        "volumeBaselineThroughput": 125,
+                        "volumeBurstThroughput": 125
+                    },
+                    "performanceRisk": 1.0,
+                    "rank": 1
+                },
+                {
+                    "configuration": {
+                        "volumeType": "gp2",
+                        "volumeSize": 8,
+                        "volumeBaselineIOPS": 100,
+                        "volumeBurstIOPS": 3000,
+                        "volumeBaselineThroughput": 128,
+                        "volumeBurstThroughput": 128
+                    },
+                    "performanceRisk": 1.0,
+                    "rank": 2
+                }
+            ],
+            "lastRefreshTimestamp": "2022-09-20T06:44:59.172000+00:00"
+        }
+    ],
+    "errors": []
+}

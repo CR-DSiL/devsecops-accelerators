@@ -1,0 +1,83 @@
+[
+  {
+    "additionalImpact": [
+      {
+        "category": "COST",
+        "costProjection": {
+          "cost": {
+            "currencyCode": "USD",
+            "nanos": 419649942
+          },
+          "duration": "2592000s"
+        }
+      }
+    ],
+    "associatedInsights": [
+      {
+        "insight": "projects/819212769892/locations/us-east1-b/insightTypes/google.compute.instance.CpuUsagePredictionInsight/insights/40a1b689-9f0c-4187-94ce-f45be9e854fe"
+      },
+      {
+        "insight": "projects/819212769892/locations/us-east1-b/insightTypes/google.compute.instance.MemoryUsagePredictionInsight/insights/4cb36125-88db-4311-be82-5ad02355d114"
+      },
+      {
+        "insight": "projects/819212769892/locations/us-east1-b/insightTypes/google.compute.instance.MemoryUsageInsight/insights/e70439d2-7058-43dc-9bf4-dd773bbf6348"
+      }
+    ],
+    "content": {
+      "operationGroups": [
+        {
+          "operations": [
+            {
+              "action": "test",
+              "path": "/machineType",
+              "resource": "//compute.googleapis.com/projects/cr-test-356813/zones/us-east1-b/instances/machinetype",
+              "resourceType": "compute.googleapis.com/Instance",
+              "valueMatcher": {
+                "matchesPattern": ".*zones/us-east1-b/machineTypes/e2-medium"
+              }
+            },
+            {
+              "action": "replace",
+              "path": "/machineType",
+              "resource": "//compute.googleapis.com/projects/cr-test-356813/zones/us-east1-b/instances/machinetype",
+              "resourceType": "compute.googleapis.com/Instance",
+              "value": "zones/us-east1-b/machineTypes/e2-custom-medium-5120"
+            }
+          ]
+        }
+      ],
+      "overview": {
+        "currentMachineType": {
+          "cpuMilliVcores": 2000,
+          "guestCpus": 2,
+          "memoryBytes": 4294967296,
+          "memoryMb": 4096,
+          "name": "e2-medium"
+        },
+        "location": "us-east1-b",
+        "recommendedAction": "Change machine type",
+        "recommendedMachineType": {
+          "cpuMilliVcores": 1000,
+          "guestCpus": 1,
+          "memoryBytes": 5368709120,
+          "memoryMb": 5120,
+          "name": "e2-custom-medium-5120"
+        },
+        "resource": "//compute.googleapis.com/projects/cr-test-356813/zones/us-east1-b/instances/machinetype",
+        "resourceName": "machinetype"
+      }
+    },
+    "description": "Improve performance by changing machine type from e2-medium to e2-custom-medium-5120.",
+    "etag": "\"a4d258a0fb19e284\"",
+    "lastRefreshTime": "2022-09-27T20:16:17Z",
+    "name": "projects/819212769892/locations/us-east1-b/recommenders/google.compute.instance.MachineTypeRecommender/recommendations/bfa3006d-1926-4b97-8cdf-f6d4ed6ed0f9",
+    "primaryImpact": {
+      "category": "PERFORMANCE"
+    },
+    "priority": "P4",
+    "recommenderSubtype": "CHANGE_MACHINE_TYPE",
+    "stateInfo": {
+      "state": "ACTIVE"
+    }
+  }
+]

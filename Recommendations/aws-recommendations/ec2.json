@@ -1,0 +1,110 @@
+{
+    "instanceRecommendations": [
+        {
+            "instanceArn": "arn:aws:ec2:us-east-1:876737291315:instance/i-09bda3910e4a06b7d",
+            "accountId": "876737291315",
+            "instanceName": "recommmendation Test",
+            "currentInstanceType": "t2.micro",
+            "finding": "OPTIMIZED",
+            "findingReasonCodes": [],
+            "utilizationMetrics": [
+                {
+                    "name": "CPU",
+                    "statistic": "MAXIMUM",
+                    "value": 100.0
+                },
+                {
+                    "name": "EBS_READ_OPS_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 94.45
+                },
+                {
+                    "name": "EBS_WRITE_OPS_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 145.23333333333332
+                },
+                {
+                    "name": "EBS_READ_BYTES_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 3206835.933333333
+                },
+                {
+                    "name": "EBS_WRITE_BYTES_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 31253645.833333332
+                },
+                {
+                    "name": "NETWORK_IN_BYTES_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 181898.4738888889
+                },
+                {
+                    "name": "NETWORK_OUT_BYTES_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 1372.1158333333333
+                },
+                {
+                    "name": "NETWORK_PACKETS_IN_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 123.93222222222222
+                },
+                {
+                    "name": "NETWORK_PACKETS_OUT_PER_SECOND",
+                    "statistic": "MAXIMUM",
+                    "value": 25.68277777777778
+                }
+            ],
+            "lookBackPeriodInDays": 14.0,
+            "recommendationOptions": [
+                {
+                    "instanceType": "t3.micro",
+                    "projectedUtilizationMetrics": [
+                        {
+                            "name": "CPU",
+                            "statistic": "MAXIMUM",
+                            "value": 60.86956521739131
+                        }
+                    ],
+                    "platformDifferences": [
+                        "NetworkInterface",
+                        "StorageInterface",
+                        "Hypervisor"
+                    ],
+                    "performanceRisk": 1.0,
+                    "rank": 1,
+                    "migrationEffort": "VeryLow"
+                },
+                {
+                    "instanceType": "t2.micro",
+                    "projectedUtilizationMetrics": [
+                        {
+                            "name": "CPU",
+                            "statistic": "MAXIMUM",
+                            "value": 100.0
+                        }
+                    ],
+                    "platformDifferences": [],
+                    "performanceRisk": 1.0,
+                    "rank": 2,
+                    "migrationEffort": "VeryLow"
+                }
+            ],
+            "recommendationSources": [
+                {
+                    "recommendationSourceArn": "arn:aws:ec2:us-east-1:876737291315:instance/i-09bda3910e4a06b7d",
+                    "recommendationSourceType": "Ec2Instance"
+                }
+            ],
+            "lastRefreshTimestamp": "2022-10-10T09:35:59.527000+00:00",
+            "effectiveRecommendationPreferences": {
+                "cpuVendorArchitectures": [
+                    "CURRENT"
+                ],
+                "enhancedInfrastructureMetrics": "Inactive",
+                "inferredWorkloadTypes": "Active"
+            },
+            "inferredWorkloadTypes": []
+        }
+    ],
+    "errors": []
+}

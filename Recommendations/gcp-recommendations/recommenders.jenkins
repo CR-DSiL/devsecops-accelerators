@@ -1,0 +1,94 @@
+node(){
+    properties([
+    parameters([
+        [$class: 'ChoiceParameter', 
+            choiceType: 'PT_SINGLE_SELECT', 
+            description: 'Select the Provider Name from the Dropdown List', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'Provider', 
+            randomName: 'choice-parameter-Provider', 
+            script: [
+                $class: 'GroovyScript', 
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: true, 
+                    script: 
+                        'return[\'Could not get Provider\']'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: true, 
+                    script: 
+                        'return["GCP","AWS"]'
+                ]
+            ]
+        ], 
+        [$class: 'CascadeChoiceParameter', 
+            choiceType: 'PT_SINGLE_SELECT', 
+            description: 'Select the Recommendation from the Dropdown List', 
+            filterLength: 1, 
+            filterable: false, 
+            name: 'Recommendation', 
+            randomName: 'choice-parameter-Recommendation', 
+            referencedParameters: 'Provider', 
+            script: [
+                $class: 'GroovyScript', 
+                fallbackScript: [
+                    classpath: [], 
+                    sandbox: true, 
+                    script: 
+                        'return[\'Could not get Recommendation from Env Param\']'
+                ], 
+                script: [
+                    classpath: [], 
+                    sandbox: true, 
+                    script: 
+                        ''' if (Provider.equals("GCP")){
+                                return["MACHINE TYPE","IDLE IMAGES"]
+                            }
+                        '''
+                ]
+            ]
+        ]
+    ]),
+        pipelineTriggers([
+            parameterizedCron('''
+                TZ=Asia/Calcutta
+            #IST (Indian Standard Time)
+            #-----------------GCP--------------------------
+            #-------MACHINE TYPE----GCP---
+            #15 09 * * 1-5 %Provider=GCP;Recommendation=MACHINE TYPE
+            #-------IDLE IMAGES----GCP---
+            #15 09 * * 1-5 %Provider=GCP;Recommendation=IDLE IMAGES
+            ''')
+        ])
+    ])
+
+    if(Provider.equals('GCP')){
+        if(Recommendation.equals('IDLE IMAGES')){
+            stage('Git Clone'){
+                git branch: 'master', credentialsId: 'GitHub_Private_Key', url: 'git@github.com:ashokdas14/recom.git'
+                sh 'chmod 777 ${env.WORKSPACE}'
+            }
+            stage("IDLE IMAGES Recommendation"){
+                dir ("${env.WORKSPACE}"){
+                    sh 'chmod 755 recommendation.sh'
+                    sh './recommendation.sh idleimages' 
+                }
+            }
+        }
+        else if(Recommendation.equals('MACHINE TYPE')){
+            stage('Git Clone'){
+                git branch: 'master', credentialsID: 'GitHub_Private_Key', url: 'git@github.com:ashokdas14/recom.git'
+                sh 'chmod 777 /var/lib/jenkins/workspace/recom'
+            }
+            stage("MACHINE TYPE Recommendation"){
+                dir ("${env.WORKSPACE}"){
+                    sh 'chmod 755 recommendation.sh'
+                    sh './recommendation.sh machinetype '
+                }
+            }
+        }
+    }
+}

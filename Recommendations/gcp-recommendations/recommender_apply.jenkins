@@ -1,0 +1,12 @@
+node(){
+        stage('Git Clone'){
+            git branch: 'master', credentialsId: 'GitHub_Private_Key', url: 'git@github.com:ashokdas14/recom.git'
+            sh 'chmod 777 /var/lib/jenkins/workspace/recommender-apply'
+        }
+        stage("GCP"){
+            dir ("${env.WORKSPACE}"){
+                sh 'chmod 755 gcp_apply_recommendation.sh'
+                sh './gcp_apply_recommendation.sh'
+            }
+        }
+    }

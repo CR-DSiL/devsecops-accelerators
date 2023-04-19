@@ -1,0 +1,94 @@
+[
+  {
+    "associatedInsights": [
+      {
+        "insight": "projects/699269491104/locations/global/insightTypes/google.compute.image.IdleResourceInsight/insights/918e00d9-f209-48d2-9d62-1d9531cf9c59"
+      }
+    ],
+    "content": {
+      "operationGroups": [
+        {
+          "operations": [
+            {
+              "action": "remove",
+              "path": "/",
+              "resource": "//compute.googleapis.com/projects/cr-devsecops-356707/global/images/splunk",
+              "resourceType": "compute.googleapis.com/Image"
+            }
+          ]
+        }
+      ],
+      "overview": {
+        "location": "global",
+        "recommendedAction": "Delete",
+        "resource": "//compute.googleapis.com/projects/cr-devsecops-356707/global/images/splunk",
+        "resourceName": "splunk"
+      }
+    },
+    "description": "Save cost by deleting idle image 'splunk'.",
+    "etag": "\"c2cc6f3ccf43f2cf\"",
+    "lastRefreshTime": "2022-09-22T07:00:00.999293Z",
+    "name": "projects/699269491104/locations/global/recommenders/google.compute.image.IdleResourceRecommender/recommendations/17d75513-6a83-49f1-af19-831d3036fc61",
+    "primaryImpact": {
+      "category": "COST",
+      "costProjection": {
+        "cost": {
+          "currencyCode": "USD",
+          "nanos": -393046720
+        },
+        "duration": "2592000s"
+      }
+    },
+    "priority": "P4",
+    "recommenderSubtype": "DELETE_IMAGE",
+    "stateInfo": {
+      "state": "ACTIVE"
+    }
+  },
+  {
+    "associatedInsights": [
+      {
+        "insight": "projects/699269491104/locations/global/insightTypes/google.compute.image.IdleResourceInsight/insights/04a98b5a-8214-4746-91a2-65a28f48eff4"
+      }
+    ],
+    "content": {
+      "operationGroups": [
+        {
+          "operations": [
+            {
+              "action": "remove",
+              "path": "/",
+              "resource": "//compute.googleapis.com/projects/cr-devsecops-356707/global/images/cr-jenkins-worker-images",
+              "resourceType": "compute.googleapis.com/Image"
+            }
+          ]
+        }
+      ],
+      "overview": {
+        "location": "global",
+        "recommendedAction": "Delete",
+        "resource": "//compute.googleapis.com/projects/cr-devsecops-356707/global/images/cr-jenkins-worker-images",
+        "resourceName": "cr-jenkins-worker-images"
+      }
+    },
+    "description": "Save cost by deleting idle image 'cr-jenkins-worker-images'.",
+    "etag": "\"2a78ad77ff0bd0b4\"",
+    "lastRefreshTime": "2022-09-22T07:00:00.999293Z",
+    "name": "projects/699269491104/locations/global/recommenders/google.compute.image.IdleResourceRecommender/recommendations/bd912db0-9e32-4012-87f9-07db2b26f52d",
+    "primaryImpact": {
+      "category": "COST",
+      "costProjection": {
+        "cost": {
+          "currencyCode": "USD",
+          "nanos": -451260185
+        },
+        "duration": "2592000s"
+      }
+    },
+    "priority": "P4",
+    "recommenderSubtype": "DELETE_IMAGE",
+    "stateInfo": {
+      "state": "ACTIVE"
+    }
+  }
+]
