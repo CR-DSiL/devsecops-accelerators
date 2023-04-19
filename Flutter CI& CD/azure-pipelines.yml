@@ -1,0 +1,181 @@
+trigger: none
+
+pool:
+  vmImage: 'macOS-latest'
+
+variables:
+- group: Android
+- group: iOS
+- group: Visual Studio App Center
+- name: android_apk_path
+  value: build/app/outputs/apk/release/*.apk
+
+stages:
+- stage: android_build_stage
+  displayName: "Android Build"
+  jobs:
+  - job: android
+    displayName: Build android package
+    steps:
+    # To acquire a specific version of Java from a user-supplied Azure blob or the tool cache and set JAVA_HOME.
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '11'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
+
+    # Installs the Flutter SDK onto the running agent if not already installed.
+    - task: FlutterInstall@0
+      inputs:
+        channel: 'stable'
+        version: 'latest'
+
+    # Flutter build
+    - task: FlutterBuild@0
+      inputs:
+        target: 'apk'
+        projectDirectory: '.'
+        entryPoint: "lib/main.dart"
+        apkTargetPlatform: 'android-arm64'
+
+    # Launch tests and publish a report as build test results.
+    # - task: FlutterTest@0
+    #   inputs:
+    #     projectDirectory: '.'
+            
+    # To sign and align Android APK files.      
+    - task: AndroidSigning@3
+      inputs:
+        apkFiles: '**/*.apk'
+        apksignerKeystoreFile: key_gis.jks
+        apksignerKeystorePassword: '$(keypassword)'
+        apksignerKeystoreAlias: '$(keyalias)'
+        apksignerKeyPassword: '$(keypassword)'
+
+    # To copy files from a source folder to a target folder using match patterns.
+    - task: CopyFiles@2
+      displayName: 'Copy .apk package'
+      inputs:
+        contents: '**/*.apk'
+        targetFolder: '$(build.artifactStagingDirectory)'
+        OverWrite: true
+
+    # To publish build artifacts to Azure Pipelines, 
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish .apk package'
+      inputs:
+        artifactName: 'apk'
+
+    # To distribute app builds to testers and users via Visual Studio App Center.
+    - task: AppCenterDistribute@3
+      displayName: 'App Center Distribution'
+      inputs:
+        serverEndpoint: 'SparkGISMobileApp'
+        appSlug: '$(android_slug)'
+        appFile: '$(build.artifactStagingDirectory)/$(android_apk_path)'
+        symbolsOption: 'Android'
+        releaseNotesOption: 'input'
+        releaseNotesInput: 'CI/CD Test'
+        destinationType: 'groups'
+        distributionGroupId: '$(android_distribution_id)'
+
+- stage: iOS_build_stage
+  displayName: "iOS Build"
+  jobs:
+  - job: iOS
+    displayName: Build iOS bundle
+    steps:  
+    # To install the Apple certificate that is required to build on a macOS agent. 
+    # You can use this task to install an Apple certificate that is stored as a secure file on the server.
+    - task: InstallAppleCertificate@2
+      displayName: "Install Apple p12 cert"
+      inputs:
+        certSecureFile: "Certificates.p12"
+        certPwd: 'P12password'
+        keychain: "temp"
+        deleteCert: true
+
+    # To install an Apple provisioning profile, which is required in order to build on a macOS agent.        
+    - task: InstallAppleProvisioningProfile@1
+      displayName: "Install Apple Mobile Provisioning Profile"
+      inputs:
+        provisioningProfileLocation: "secureFiles"
+        provProfileSecureFile: "DistributionAdhocSpark.mobileprovision"
+        removeProfile: true
+
+    # Installs the Flutter SDK onto the running agent if not already installed.
+    - task: FlutterInstall@0
+      inputs:
+        channel: 'stable'
+        version: 'latest'
+
+      # Flutter build
+    - task: FlutterBuild@0
+      inputs:
+        target: 'ios'
+        projectDirectory: '.'
+        entryPoint: "lib/main.dart"
+        iosCodesign: false
+
+    # Launch tests and publish a report as build test results.
+    # - task: FlutterTest@0
+    #   inputs:
+    #     projectDirectory: '.'
+            
+    # To build, test, or archive an Xcode workspace on macOS, and optionally package an app.      
+    - task: Xcode@5
+      displayName: "Code sign ipa for distribution"
+      inputs:
+        actions: 'archive'
+        sdk: 'iphoneos'
+        configuration: 'release'
+        scheme: 'Runner'
+        xcWorkspacePath: '**/Runner.xcworkspace'
+        signingOption: 'manual'
+        signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+        provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+        packageApp: true
+        workingDirectory: 'ios'
+        exportOptions: 'plist'
+        exportOptionsPlist: 'ios/ExportOptions.plist'
+        archivePath: 'output/iphoneos/release/Runner.xcarchive'
+        exportPath: 'output/iphoneos/release'
+        useXcpretty: 'false'
+        args: 'CODE_SIGNING_ALLOWED=No'
+
+    # To copy files from a source folder to a target folder using match patterns.
+    - task: CopyFiles@2
+      displayName: 'Copy .ipa package'
+      inputs:
+        contents: '**/*.ipa'
+        targetFolder: '$(build.artifactStagingDirectory)'
+        OverWrite: true
+
+    # To publish build artifacts to Azure Pipelines, 
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish .ipa package'
+      inputs:
+        artifactName: 'ipa'
+
+    # To distribute app builds to testers and users via Visual Studio App Center.
+    - task: AppCenterDistribute@3
+      displayName: 'App Center Distribution'
+      inputs:
+        serverEndpoint: 'SparkGISMobileApp'
+        appSlug: '$(ios_slug)'
+        appFile: '$(build.artifactStagingDirectory)/**/*.ipa'
+        symbolsOption: 'Apple'
+        releaseNotesOption: 'input'
+        releaseNotesInput: 'CI/CD Test'
+        destinationType: 'groups'
+        distributionGroupId: '$(ios_distribution_id)'
+
+    # Task to automate the release of updates to existing iOS TestFlight beta apps or production apps in the App Store
+    # - task: AppStoreRelease@1
+    #   displayName: 'Publish to the App Store TestFlight track'
+    #   inputs:
+    #     serviceEndpoint: 'apple-app-store-sc'
+    #     appIdentifier: 'com.sparkgis'
+    #     ipaPath: '$(build.artifactstagingdirectory)/**/*.ipa'
+    #     shouldSkipWaitingForProcessing: true
+    #     shouldSkipSubmission: true

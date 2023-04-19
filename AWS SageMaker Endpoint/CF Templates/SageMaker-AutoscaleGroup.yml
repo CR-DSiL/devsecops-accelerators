@@ -1,0 +1,181 @@
+Resources:
+  SageMakerEndpoint:
+    Type: "AWS::SageMaker::Endpoint"
+    Properties:
+      EndpointConfigName: !Ref SageMakerEndpointConfigName
+
+  SageMakerEndpointConfig:
+    Type: "AWS::SageMaker::EndpointConfig"
+    Properties:
+      ProductionVariants:
+        - VariantName: "variant-1"
+          ModelName: !Ref SageMakerModelName
+          InitialInstanceCount: 1
+          InstanceType: "ml.m4.xlarge"
+
+  SageMakerModel:
+    Type: "AWS::SageMaker::Model"
+    Properties:
+      ExecutionRoleArn: !Ref SageMakerExecutionRoleArn
+      ModelName: "your-model-name"
+      PrimaryContainer:
+        ContainerHostname: "your-container-hostname"
+        Image: "your-container-image"
+        ModelDataUrl: "your-model-data-url"
+
+  SageMakerExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "sagemaker.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: "sagemaker-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "sagemaker:CreateEndpoint"
+                  - "sagemaker:CreateEndpointConfig"
+                  - "sagemaker:CreateModel"
+                  - "sagemaker:DeleteEndpoint"
+                  - "sagemaker:DeleteEndpointConfig"
+                  - "sagemaker:DeleteModel"
+                  - "sagemaker:InvokeEndpoint"
+                  - "sagemaker:UpdateEndpoint"
+                  - "sagemaker:UpdateEndpointWeightsAndCapacities"
+                Resource: "*"
+
+  SageMakerScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: "your_policy_name"
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref SageMakerEndpoint
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: "your_target_value"
+        ScaleInCooldown: "your_scale_in_cooldown"
+        ScaleOutCooldown: "your_scale_out_cooldown"
+        PredefinedMetricSpecification:
+          PredefinedMetricType: SageMakerVariantInvocationsPerInstance
+          ResourceLabel: "variant-1"-"your_instance_type"
+
+  SageMakerAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties: 
+      LaunchConfigurationName: "your_launch_configuration"
+      MinSize: "your_min_size"
+      MaxSize: "your_max_size"
+      DesiredCapacity: "your_desired_capacity"
+      VPCZoneIdentifier: "your_vpc_zone_identifier"
+      TargetGroupARNs: 
+          - Ref: SageMakerTargetGroup
+      Tags:
+          - Key: "your_tag_key"
+            Value: "your_tag_value"
+      MetricsCollection:
+        - Granularity: "1Minute"
+        - Metrics:
+            - GroupDesiredCapacity
+            - GroupInServiceInstances
+            - GroupPendingInstances
+            - GroupStandbyInstances
+            - GroupSuspendedProcesses
+            - GroupTerminatingInstances
+            - GroupTotalInstances
+
+  SageMakerTargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      UnhealthyThresholdCount: 2
+      Port: 8080
+      Protocol: HTTP
+      TargetType: instance
+      VpcId:
+        Ref: "SageMakerVPC"
+      Tags:
+        - Key: Name
+          Value: "SageMakerTargetGroup"
+        - Key: Application
+          Value: "MyApplication"
+        - Key: Environment
+          Value: "MyEnvironment"
+
+  SageMakerVPC:
+    Type: "AWS::EC2::VPC"
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: "SageMakerVPC"
+        - Key: Application
+          Value: "MyApplication"
+        - Key: Environment
+          Value: "MyEnvironment"
+
+  SageMakerLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        S3Bucket: "your-s3-bucket-name"
+        S3Key: "your-s3-key"
+      Description: "SageMaker Lambda function"
+      FunctionName: "your-function-name"
+      Handler: "index.handler"
+      MemorySize: 128
+      Role: !GetAtt SageMakerLambdaExecutionRole.Arn
+      Runtime: "python3.7"
+      Timeout: 10
+      Environment:
+        Variables:
+          ENDPOINT_NAME: !Ref SageMakerEndpoint
+          CONTENT_TYPE: application/json
+          EXTENSION: '.json'
+
+  SageMakerLambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: "lambda-policy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "arn:aws:logs:*:*:*"
+              - Effect: "Allow"
+                Action:
+                  - "sagemaker:InvokeEndpoint"
+                Resource: "*"
+
+  SageMakerApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "your-api-gateway-name"
+
+  SageMakerApiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn:
+      - SageMakerApiGatewayResource
